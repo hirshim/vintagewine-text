@@ -13,13 +13,6 @@ delay 1
 tell application "System Events"
     tell process "KWReportSecretary"
         set frontmost to true
---        set value of text field 1 of window "カルテ印刷" to patientID
-    end tell
-end tell
-
--- 改行コードを入力
-tell application "System Events"
-    tell process "KWReportSecretary"
         set focused of text field 1 of window "カルテ印刷" to true
             keystroke patientID
             keystroke return
