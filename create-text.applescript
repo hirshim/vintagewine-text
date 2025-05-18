@@ -6,8 +6,15 @@ tell application "KWReportSecretary"
     activate
 end tell
 
--- 1秒待つ
-delay 1
+-- カルテ印刷ウィンドウが表示されるまで待機
+repeat
+    tell application "System Events"
+        if exists window "カルテ印刷" of process "KWReportSecretary" then
+            exit repeat
+        end if
+    end tell
+    delay 0.5
+end repeat
 
 -- KWReportSecretary のテキストフィールドに患者IDを入力
 tell application "System Events"
@@ -45,6 +52,6 @@ end tell
 
 -- ファイルに保存
 set filePath to ((path to desktop) as text) & patientID & ".txt"
-set fileRef to open for access filePath with write permission
+set fileRef to open for access filePath with write permission as «class utf8»
 write theText to fileRef
 close access fileRef
