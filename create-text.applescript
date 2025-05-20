@@ -49,7 +49,7 @@ tell application "System Events"
         set focused of text area 1 of scroll area 1 of window "診療録" to true
         keystroke "a" using {command down}
         keystroke "c" using {command down}
-        set theText to the clipboard as text
+        set theText to the clipboard
     end tell
 end tell
 
