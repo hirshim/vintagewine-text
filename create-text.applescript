@@ -46,12 +46,16 @@ end repeat
 -- テキストをコピー
 tell application "System Events"
     tell process "KWReportSecretary"
-        set theText to value of text area 1 of scroll area 1 of window "診療録"
+        set focused of text area 1 of scroll area 1 of window "診療録" to true
+        keystroke "a" using {command down}
+        keystroke "c" using {command down}
+        set theText to the clipboard as text
     end tell
 end tell
 
 -- ファイルに保存
-set filePath to ((path to desktop) as text) & patientID & ".txt"
-set fileRef to open for access filePath with write permission as «class utf8»
+set currentDate to do shell script "date '+%Y%m%d'"
+set filePath to ((path to desktop) as text) & currentDate & "_" & patientID & ".rtfd"
+set fileRef to open for access filePath with write permission
 write theText to fileRef
 close access fileRef

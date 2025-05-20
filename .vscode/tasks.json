@@ -1,0 +1,46 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Script",
+      "type": "shell",
+      "command": "osascript",
+      "args": [
+        "create-text.applescript"
+      ]
+    },
+    {
+      "label": "Compile Script",
+      "type": "shell",
+      "command": "osacompile",
+      "args": [
+        "-o",
+        "create-text.scpt",
+        "create-text.applescript"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Compile Script Bundle",
+      "type": "shell",
+      "command": "osacompile",
+      "args": [
+        "-o",
+        "create-text.scptd",
+        "create-text.applescript"
+      ],
+      "group": "none"
+    },
+    {
+      "label": "Compile Application",
+      "type": "shell",
+      "command": "osacompile",
+      "args": [
+        "-o",
+        "create-text.app",
+        "create-text.applescript"
+      ],
+      "group": "none"
+    }
+  ]
+}
