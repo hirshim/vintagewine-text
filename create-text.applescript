@@ -68,3 +68,8 @@ on error errMsg
     end try
     display dialog "ファイルの保存中にエラーが発生しました: " & errMsg buttons {"OK"} default button "OK" with icon stop
 end try
+
+-- KWReportSecretaryを終了
+tell application "KWReportSecretary"
+    quit
+end tell
