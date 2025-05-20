@@ -72,19 +72,46 @@ on createPatientReport(patientID)
     tell application "KWReportSecretary"
         quit
     end tell
+    delay 1
 end createPatientReport
 
-
 on run
-    -- 患者IDを入力するダイアログを表示
-    set patientID to text returned of (display dialog "患者IDを入力してください:" default answer "" buttons {"キャンセル", "OK"} default button "OK")
+    -- 複数患者IDを入力するダイアログを表示
+    set inputIDs to text returned of (display dialog "患者IDをカンマ・スペース・改行で区切って入力してください:" default answer "" buttons {"キャンセル", "OK"} default button "OK")
     
-    -- キャンセルボタンが押された場合は終了
-    if patientID is "" then
+    -- キャンセルまたは空欄の場合は終了
+    if inputIDs is "" then
         return
     end if
     
-    createPatientReport(patientID)
-end run
+    -- カンマ+スペースを単一のカンマに置換
+    set AppleScript's text item delimiters to {", "}
+    set inputIDs to text items of inputIDs
+    set AppleScript's text item delimiters to ","
+    set inputIDs to inputIDs as text
+    
+    -- 区切り文字で分割（カンマ、スペース、改行）
+    set AppleScript's text item delimiters to {",", " ", return, linefeed}
+    set idList to text items of inputIDs
+    set AppleScript's text item delimiters to ""
+    -- IDリストをダイアログに表示
+    set idListStr to ""
+    repeat with id in idList
+        if id is not "" then
+            set idListStr to idListStr & id & return
+        end if
+    end repeat
 
-on createPatientReport(patientID)
+    display dialog "以下の患者IDを処理します:" & return & return & idListStr buttons {"キャンセル", "続行"} default button "続行"
+    if button returned of result is "キャンセル" then
+        return
+    end if
+
+    -- 各IDに対して処理
+    repeat with patientID in idList
+        set patientID to (patientID as string)
+        if patientID is not "" then
+            createPatientReport(patientID)
+        end if
+    end repeat
+end run
