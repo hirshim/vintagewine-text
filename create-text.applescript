@@ -1,27 +1,23 @@
 -- カルテ印刷を制御する関数
 on createPatientReport(patientID)
-    -- KWReportSecretary を起動
-    tell application "KWReportSecretary"
-        activate
-    end tell
+    -- KWReportSecretary を前面に出す（未起動なら起動）
+    tell application "KWReportSecretary" to activate
 
     -- カルテ印刷ウィンドウが表示されるまで待機
     repeat
         tell application "System Events"
-            if exists window "カルテ印刷" of process "KWReportSecretary" then
-                exit repeat
-            end if
+            if exists window "カルテ印刷" of process "KWReportSecretary" then exit repeat
         end tell
         delay 0.5
     end repeat
 
-    -- KWReportSecretary のテキストフィールドに患者IDを入力
+    -- 患者IDを入力
     tell application "System Events"
         tell process "KWReportSecretary"
             set frontmost to true
             set focused of text field 1 of window "カルテ印刷" to true
-                keystroke patientID
-                keystroke return
+            keystroke patientID
+            keystroke return
         end tell
     end tell
 
@@ -35,9 +31,7 @@ on createPatientReport(patientID)
     -- 診療録ウィンドウが表示されるまで待機
     repeat
         tell application "System Events"
-            if exists window "診療録" of process "KWReportSecretary" then
-                exit repeat
-            end if
+            if exists window "診療録" of process "KWReportSecretary" then exit repeat
         end tell
         delay 0.5
     end repeat
@@ -55,7 +49,6 @@ on createPatientReport(patientID)
     set fileName to patientID & "_" & currentDate & ".txt"
     set filePath to "/Users/shimizu/git/vintagewine-card/" & fileName
 
-    -- テキストをUTF-8でファイルに保存
     try
         set fileRef to open for access filePath with write permission
         set eof of fileRef to 0
@@ -68,46 +61,27 @@ on createPatientReport(patientID)
         display dialog "ファイルの保存中にエラーが発生しました: " & errMsg buttons {"OK"} default button "OK" with icon stop
     end try
 
-    -- KWReportSecretaryを終了
-    tell application "KWReportSecretary"
-        quit
-    end tell
+    -- KWReportSecretary を終了し、完全に終了するまで待機
+    tell application "KWReportSecretary" to quit
     delay 1
 end createPatientReport
 
 on run
-    -- 複数患者IDを入力するダイアログを表示
+    -- 複数患者IDを入力
     set inputIDs to text returned of (display dialog "患者IDをカンマ・スペース・改行で区切って入力してください:" default answer "" buttons {"キャンセル", "OK"} default button "OK")
-    
-    -- キャンセルまたは空欄の場合は終了
-    if inputIDs is "" then
-        return
-    end if
-    
-    -- カンマ+スペースを単一のカンマに置換
+    if inputIDs is "" then return
+
+    -- カンマ+スペースをカンマに統一
     set AppleScript's text item delimiters to {", "}
     set inputIDs to text items of inputIDs
     set AppleScript's text item delimiters to ","
     set inputIDs to inputIDs as text
-    
-    -- 区切り文字で分割（カンマ、スペース、改行）
+
+    -- 区切り文字で分割
     set AppleScript's text item delimiters to {",", " ", return, linefeed}
     set idList to text items of inputIDs
     set AppleScript's text item delimiters to ""
-    -- IDリストをダイアログに表示
-    set idListStr to ""
-    repeat with id in idList
-        if id is not "" then
-            set idListStr to idListStr & id & return
-        end if
-    end repeat
 
-    -- display dialog "以下の患者IDを処理します:" & return & return & idListStr buttons {"キャンセル", "続行"} default button "続行"
-    -- if button returned of result is "キャンセル" then
-    --     return
-    -- end if
-
-    -- 各IDに対して処理
     repeat with patientID in idList
         set patientID to (patientID as string)
         if patientID is not "" then
