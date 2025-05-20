@@ -102,10 +102,10 @@ on run
         end if
     end repeat
 
-    display dialog "以下の患者IDを処理します:" & return & return & idListStr buttons {"キャンセル", "続行"} default button "続行"
-    if button returned of result is "キャンセル" then
-        return
-    end if
+    -- display dialog "以下の患者IDを処理します:" & return & return & idListStr buttons {"キャンセル", "続行"} default button "続行"
+    -- if button returned of result is "キャンセル" then
+    --     return
+    -- end if
 
     -- 各IDに対して処理
     repeat with patientID in idList
