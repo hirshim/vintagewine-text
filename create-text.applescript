@@ -43,19 +43,28 @@ repeat
     delay 0.5
 end repeat
 
--- テキストをコピー
+-- テキストを取得
 tell application "System Events"
     tell process "KWReportSecretary"
         set focused of text area 1 of scroll area 1 of window "診療録" to true
-        keystroke "a" using {command down}
-        keystroke "c" using {command down}
-        set theText to the clipboard
+        set textContent to value of text area 1 of scroll area 1 of window "診療録"
     end tell
 end tell
 
 -- ファイルに保存
 set currentDate to do shell script "date '+%Y%m%d'"
-set filePath to ((path to desktop) as text) & currentDate & "_" & patientID & ".rtfd"
-set fileRef to open for access filePath with write permission
-write theText to fileRef
-close access fileRef
+set fileName to currentDate & "_" & patientID & ".txt"
+set filePath to "/Users/shimizu/git/vintagewine-card/" & fileName
+
+-- テキストをUTF-8でファイルに保存
+try
+    set fileRef to open for access filePath with write permission
+    set eof of fileRef to 0
+    write textContent to fileRef as «class utf8»
+    close access fileRef
+on error errMsg
+    try
+        close access fileRef
+    end try
+    display dialog "ファイルの保存中にエラーが発生しました: " & errMsg buttons {"OK"} default button "OK" with icon stop
+end try
