@@ -45,8 +45,8 @@ on createPatientReport(patientID)
     end tell
 
     -- ファイルに保存
-    set currentDate to do shell script "date '+%Y%m%d'"
-    set fileName to patientID & "_" & currentDate & ".txt"
+    set currentDateTime to do shell script "date '+%Y%m%d_%H%M%S'"
+    set fileName to patientID & "_" & currentDateTime & ".txt"
     set filePath to "/Users/shimizu/git/vintagewine-card/" & fileName
 
     try
@@ -71,21 +71,37 @@ on run
     set inputIDs to text returned of (display dialog "患者IDをカンマ・スペース・改行で区切って入力してください:" default answer "" buttons {"キャンセル", "OK"} default button "OK")
     if inputIDs is "" then return
 
+
     -- カンマ+スペースをカンマに統一
     set AppleScript's text item delimiters to {", "}
     set inputIDs to text items of inputIDs
     set AppleScript's text item delimiters to ","
     set inputIDs to inputIDs as text
 
+
     -- 区切り文字で分割
     set AppleScript's text item delimiters to {",", " ", return, linefeed}
     set idList to text items of inputIDs
     set AppleScript's text item delimiters to ""
 
+
+
+
+    -- プログレスバーを表示
+    set totalSteps to count idList
+    set currentStep to 0
+    
     repeat with patientID in idList
         set patientID to (patientID as string)
         if patientID is not "" then
+            set currentStep to currentStep + 1
+            set progress description to "カルテ印刷処理中: " & patientID & " (" & currentStep & "/" & totalSteps & ")"
+            set progress total steps to totalSteps
+            set progress completed steps to currentStep
             createPatientReport(patientID)
         end if
     end repeat
+
+    -- 処理完了メッセージを表示
+    display dialog "すべての患者IDの処理が完了しました。" buttons {"OK"} default button "OK"
 end run
