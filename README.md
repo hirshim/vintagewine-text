@@ -1,6 +1,6 @@
-# カルテ印刷自動化スクリプト
+# VintageWine カルテ印刷自動化スクリプト
 
-このAppleScriptは、KWReportSecretaryを使用して複数の患者カルテを自動的に印刷・保存するためのツールです。
+このAppleScriptは、KWReportSecretaryを使用して複数の患者カルテの内容をテキストファイルとして保存するためのツールです。
 
 ## 機能
 
